@@ -11,7 +11,7 @@ export DEBIAN_FRONTEND=noninteractive
 proxmox_kernels=$(dpkg-query -f '${Package}\n' -W 'proxmox-kernel-*-pve-signed')
 for proxmox_kernel in $proxmox_kernels; do
     if [[ $proxmox_kernel != "proxmox-kernel-$(uname -r)-signed" ]]; then
-        apt-get remove -y --purge $proxmox_kernel
+        apt-get remove -y --purge "$proxmox_kernel"
     fi
 done
 
@@ -101,7 +101,7 @@ df -h /
 # NB prefer discard/trim (safer; faster) over creating a big zero filled file
 #    (somewhat unsafe as it has to fill the entire disk, which might trigger
 #    a disk (near) full alarm; slower; slightly better compression).
-if [ "$(lsblk -no DISC-GRAN $(findmnt -no SOURCE /) | awk '{print $1}')" != '0B' ]; then
+if [ "$(lsblk -no DISC-GRAN "$(findmnt -no SOURCE /)" | awk '{print $1}')" != '0B' ]; then
     while true; do
         output="$(fstrim -v /)"
         cat <<<"$output"
