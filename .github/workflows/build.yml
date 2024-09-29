@@ -1,0 +1,69 @@
+---
+name: build-box
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check_box_builder:
+    runs-on: ubuntu-latest
+    outputs:
+      needs_build: |
+        ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
+        ${{ steps.box_changed.outputs.src == 'true' }} ||
+        ${{ github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check if box config changed
+        id: box_changed
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            src:
+              - 'proxmox-ve.pkr.hcl'
+              - 'provisioners/**'
+              - 'Vagrantfile*'
+              - 'box-metadata.sh'
+
+      - name: Check if box artifact exists
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: check_box_exists
+        with:
+          name: "proxmox-ve-box"
+
+  box-builer:
+    runs-on: ubuntu-latest
+    needs: check_box_builder
+    if: ${{ needs.check_box_builder.outputs.needs_build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          version: latest
+
+      - name: Packer init
+        run: packer init ./proxmox-ve.pkr.hcl
+
+      - name: Setup QEMU and run build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system
+          sudo make build-libvirt
+
+      - name: Upload box
+        uses: actions/upload-artifact@v4
+        with:
+          name: proxmox-ve-box
+          path: |
+            ./proxmox-ve-amd64-libvirt.box
+            ./proxmox-ve-amd64-libvirt.box.json
+          retention-days: 90
