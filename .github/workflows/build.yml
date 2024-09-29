@@ -1,27 +1,18 @@
 ---
-name: build
+name: run-vm
 
-on:
-  push:
-
-env:
-  PACKER_VERSION: latest
-
+on: push
 jobs:
-  packer:
-    runs-on: ubuntu-latest
-    name: Run Packer
+  vm-run:
+    runs-on: actuated-4cpu-8gb
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup `packer`
-        uses: hashicorp/setup-packer@main
+      - uses: actions/checkout@master
         with:
-          version: ${{ env.PACKER_VERSION }}
-      - name: Set up QEMU
-        run: sudo apt-get update && sudo apt-get install qemu-system -y
-      - name: Run `packer init`
-        run: "packer init ./proxmox-ve.pkr.hcl"
-      - name: Run build
-        id: build
-        run: "make build-libvirt"
+          fetch-depth: 1
+      - name: Install arkade
+        uses: alexellis/setup-arkade@v2
+      - name: Install firecracker
+        run: |
+          sudo arkade system install firecracker
+      - name: Run microVM
+        run: sudo -E ./run-vm.sh
