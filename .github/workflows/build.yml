@@ -4,7 +4,7 @@ name: run-vm
 on: push
 jobs:
   vm-run:
-    runs-on: actuated-4cpu-8gb
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
         with:
