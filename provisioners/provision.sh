@@ -33,7 +33,7 @@ gpasswd -a vagrant admin
 chmod 750 /home/vagrant
 install -d -m 700 /home/vagrant/.ssh
 pushd /home/vagrant/.ssh
-wget -q --no-check-certificate https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub -O authorized_keys
+wget -q --no-check-certificate https://raw.githubusercontent.com/hashicorp/vagrant/refs/heads/main/keys/vagrant.pub.ed25519 -O authorized_keys
 chmod 600 authorized_keys
 chown -R vagrant:vagrant .
 popd
