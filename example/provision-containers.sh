@@ -2,7 +2,6 @@
 set -eux
 
 ip=$1
-fqdn=$(hostname --fqdn)
 
 # update the available container templates.
 # NB this downloads the https://www.turnkeylinux.org catalog.
@@ -11,15 +10,15 @@ pveam available # show templates.
 
 # create and start two alpine-linux containers.
 pve_template="$(pveam available -section system | perl -ne '/ (alpine-.+)/ && print "$1\n"' | tail -1)"
-pveam download local $pve_template
+pveam download local "$pve_template"
 for pve_id in 100 101; do
-    pve_ip=$(echo $ip | sed -E "s,\.[0-9]+\$,.$pve_id,")
+    pve_ip=$(echo "$ip" | sed -E "s,\.[0-9]+\$,.$pve_id,")
     pve_disk_size=512M
     pvesm alloc local-lvm $pve_id vm-$pve_id-disk-1 $pve_disk_size
     pvesm status # show status.
-    mkfs.ext4 $(pvesm path local-lvm:vm-$pve_id-disk-1)
+    mkfs.ext4 "$(pvesm path local-lvm:vm-$pve_id-disk-1)"
     pct create $pve_id \
-        local:vztmpl/$pve_template \
+        "local:vztmpl/$pve_template" \
         --unprivileged 0 \
         --onboot 1 \
         --ostype alpine \
@@ -28,7 +27,7 @@ for pve_id in 100 101; do
         --memory 128 \
         --swap 0 \
         --rootfs local-lvm:vm-$pve_id-disk-1,size=$pve_disk_size \
-        --net0 name=eth0,bridge=vmbr0,gw=$ip,ip=$pve_ip/24
+        --net0 "name=eth0,bridge=vmbr0,gw=$ip,ip=$pve_ip/24"
     pct config $pve_id # show config.
     pct start $pve_id
     pct exec $pve_id sh <<EOF
@@ -78,12 +77,12 @@ EOC
 rc-service nginx start
 rc-update add nginx default
 EOF
-    wget -qO- $pve_ip
+    wget -qO- "$pve_ip"
     pct exec $pve_id -- cat /etc/alpine-release
     pct exec $pve_id -- passwd -d root                          # remove the root password.
     pct exec $pve_id -- sh -c "echo 'root:vagrant' | chpasswd"  # or change it to vagrant.
     pct exec $pve_id -- ip addr
     pct exec $pve_id -- route -n
-    pct exec $pve_id -- ping $ip -c 2
+    pct exec $pve_id -- ping "$ip" -c 2
     pct status $pve_id
 done
