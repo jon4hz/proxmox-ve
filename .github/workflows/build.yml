@@ -10,7 +10,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Install arkade
-        uses: alexellis/setup-arkade@v2
+        uses: alexellis/setup-arkade@v3
       - name: Install firecracker
         run: |
           sudo arkade system install firecracker

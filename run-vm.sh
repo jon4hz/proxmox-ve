@@ -79,5 +79,7 @@ curl --unix-socket /tmp/firecracker.socket -i \
    }'
 
 # Kill the firecracker process to exit the workflow
-sleep 20
+
+apt update && apt install -y qemu-system
+
 kill -9 $firecracker_pid
