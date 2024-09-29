@@ -4,8 +4,8 @@ set -euxo pipefail
 # configure apt for non-interactive mode.
 export DEBIAN_FRONTEND=noninteractive
 
-# add support for the pt_PT locale.
-sed -i -E 's,.+(pt_PT.UTF-8 .+),\1,' /etc/locale.gen
+# add support for the de_CH locale.
+sed -i -E 's,.+(de_CH.UTF-8 .+),\1,' /etc/locale.gen
 locale-gen
 locale -a
 
@@ -15,14 +15,14 @@ cat >/etc/default/keyboard <<'EOF'
 # KEYBOARD CONFIGURATION FILE
 # Consult the keyboard(5) manual page.
 XKBMODEL="pc105"
-XKBLAYOUT="pt"
+XKBLAYOUT="ch"
 XKBVARIANT=""
 XKBOPTIONS=""
-KEYMAP="pt-latin1"
+KEYMAP="ch-latin1"
 BACKSPACE="guess"
 EOF
 dpkg-reconfigure keyboard-configuration
 
 # set the timezone.
-ln -fs /usr/share/zoneinfo/Europe/Lisbon /etc/localtime
+ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 dpkg-reconfigure tzdata

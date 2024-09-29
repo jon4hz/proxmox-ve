@@ -71,9 +71,8 @@ variable "shell_provisioner_scripts" {
   type = list(string)
   default = [
     "provisioners/apt_proxy.sh",
-    "provisioners/upgrade.sh",
     "provisioners/network.sh",
-    "provisioners/localisation-pt.sh",
+    "provisioners/localisation-ch.sh",
     "provisioners/reboot.sh",
     "provisioners/provision.sh",
   ]
