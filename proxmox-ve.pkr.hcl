@@ -10,11 +10,6 @@ packer {
       version = "1.1.8"
       source  = "github.com/hashicorp/proxmox"
     }
-    # see https://github.com/hashicorp/packer-plugin-hyperv
-    hyperv = {
-      version = "1.1.3"
-      source  = "github.com/hashicorp/hyperv"
-    }
     # see https://github.com/hashicorp/packer-plugin-vagrant
     vagrant = {
       version = "1.1.5"
@@ -55,16 +50,6 @@ variable "iso_checksum" {
 variable "proxmox_node" {
   type    = string
   default = env("PROXMOX_NODE")
-}
-
-variable "hyperv_switch_name" {
-  type    = string
-  default = env("HYPERV_SWITCH_NAME")
-}
-
-variable "hyperv_vlan_id" {
-  type    = string
-  default = env("HYPERV_VLAN_ID")
 }
 
 variable "apt_cache_host" {
@@ -301,56 +286,12 @@ source "proxmox-iso" "proxmox-ve-uefi-amd64" {
   ]
 }
 
-source "hyperv-iso" "proxmox-ve-amd64" {
-  temp_path                        = "tmp"
-  headless                         = true
-  generation                       = 2
-  enable_virtualization_extensions = true
-  enable_mac_spoofing              = true
-  cpus                             = var.cpus
-  memory                           = var.memory
-  switch_name                      = var.hyperv_switch_name
-  vlan_id                          = var.hyperv_vlan_id
-  disk_size                        = var.disk_size
-  iso_url                          = var.iso_url
-  iso_checksum                     = var.iso_checksum
-  output_directory                 = "${var.output_base_dir}/output-{{build_name}}"
-  ssh_username                     = "root"
-  ssh_password                     = "vagrant"
-  ssh_timeout                      = "60m"
-  first_boot_device                = "DVD"
-  boot_order                       = ["SCSI:0:0"]
-  cd_label                         = "proxmox-ais"
-  cd_files                         = ["answer.toml"]
-  boot_wait                        = "5s"
-  boot_command = [
-    # select Advanced Options.
-    "<end><enter>",
-    # select Install Proxmox VE (Automated).
-    "<down><down><down><enter>",
-    # wait for the shell prompt.
-    "<wait1m>",
-    # do the installation.
-    "proxmox-fetch-answer partition >/run/automatic-installer-answers<enter><wait>exit<enter>",
-    # wait for the installation to finish.
-    "<wait4m>",
-    # login.
-    "root<enter><wait5s>vagrant<enter><wait5s>",
-    # install the guest agent.
-    "rm -f /etc/apt/sources.list.d/{pve-enterprise,ceph}.list<enter>",
-    "apt-get update<enter><wait1m>",
-    "apt-get install -y hyperv-daemons<enter><wait30s>",
-  ]
-  shutdown_command = "poweroff"
-}
-
 build {
   sources = [
     "source.qemu.proxmox-ve-amd64",
     "source.qemu.proxmox-ve-uefi-amd64",
     "source.proxmox-iso.proxmox-ve-amd64",
     "source.proxmox-iso.proxmox-ve-uefi-amd64",
-    "source.hyperv-iso.proxmox-ve-amd64",
   ]
 
   provisioner "shell" {
@@ -365,7 +306,6 @@ build {
   post-processor "vagrant" {
     only = [
       "qemu.proxmox-ve-amd64",
-      "hyperv-iso.proxmox-ve-amd64",
     ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile.template"

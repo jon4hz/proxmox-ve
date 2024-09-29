@@ -1,11 +1,11 @@
 {
-    "cSpell.words": [
-        "cacher",
-        "DATACENTER",
-        "datacenters",
-        "ESXI",
-        "govc",
-        "hyperv",
-        "pkrvars"
-    ]
+  "cSpell.words": [
+    "cacher",
+    "DATACENTER",
+    "datacenters",
+    "ESXI",
+    "govc",
+    "pkrvars"
+  ],
+  "makefile.configureOnOpen": false
 }
