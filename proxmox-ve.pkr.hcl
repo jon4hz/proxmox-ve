@@ -72,6 +72,7 @@ variable "shell_provisioner_scripts" {
   default = [
     "provisioners/apt_proxy.sh",
     "provisioners/network.sh",
+    "provisioners/update.sh",
     "provisioners/localisation-ch.sh",
     "provisioners/reboot.sh",
     "provisioners/provision.sh",
