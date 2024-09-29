@@ -1,0 +1,27 @@
+---
+name: build
+
+on:
+  push:
+
+env:
+  PACKER_VERSION: latest
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: Run Packer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        with:
+          version: ${{ env.PACKER_VERSION }}
+      - name: Set up QEMU
+        run: sudo apt-get update && sudo apt-get install qemu-system -y
+      - name: Run `packer init`
+        run: "packer init ./proxmox-ve.pkr.hcl"
+      - name: Run build
+        id: build
+        run: "make build-libvirt"

@@ -7,5 +7,6 @@
     "govc",
     "pkrvars"
   ],
-  "makefile.configureOnOpen": false
+  "makefile.configureOnOpen": false,
+  "ansible.python.interpreterPath": "/bin/python"
 }
