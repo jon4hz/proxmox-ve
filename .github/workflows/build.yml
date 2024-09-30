@@ -1,9 +1,12 @@
 ---
-name: run-vm
+name: build-box
 
-on: push
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
-  vm-run:
+  box-builer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,4 +22,5 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system
+          export PACKER_LOG=1
           make build-libvirt
