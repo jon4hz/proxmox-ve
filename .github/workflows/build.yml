@@ -9,10 +9,10 @@ jobs:
       - uses: actions/checkout@master
         with:
           fetch-depth: 1
-      - name: Install arkade
-        uses: alexellis/setup-arkade@v3
-      - name: Install firecracker
-        run: |
-          sudo arkade system install firecracker
+      # - name: Install arkade
+      #   uses: alexellis/setup-arkade@v3
+      # - name: Install firecracker
+      #   run: |
+      #     sudo arkade system install firecracker
       - name: Run microVM
         run: sudo -E ./run-vm.sh
