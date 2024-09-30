@@ -14,7 +14,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y qemu-system
       - name: Setup packer
-        uses: hashicorp/setup-packer
+        uses: hashicorp/setup-packer@v3
         with:
           version: latest
       - name: Packer init
