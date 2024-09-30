@@ -6,8 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  box-builer:
+  check_box_builder:
     runs-on: ubuntu-latest
+    outputs:
+      needs_build: |
+        ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
+        ${{ steps.box_changed.outputs.src == 'true' }} ||
+        ${{ github.event_name == 'workflow_dispatch' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,37 +34,30 @@ jobs:
         with:
           name: "proxmox-ve-box"
 
+  box-builer:
+    runs-on: ubuntu-latest
+    needs: check_box_builder
+    if: ${{ needs.check_box_builder.outputs.needs_build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Setup packer
-        if: |
-          ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
-          ${{ steps.box_changed.outputs.src == 'true' }} ||
-          ${{ github.event_name == 'workflow_dispatch' }}
         uses: hashicorp/setup-packer@v3
         with:
           version: latest
 
       - name: Packer init
-        if: |
-          ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
-          ${{ steps.box_changed.outputs.src == 'true' }} ||
-          ${{ github.event_name == 'workflow_dispatch' }}
         run: packer init ./proxmox-ve.pkr.hcl
 
       - name: Setup QEMU and run build
-        if: |
-          ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
-          ${{ steps.box_changed.outputs.src == 'true' }} ||
-          ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system
           sudo make build-libvirt
 
       - name: Upload box
-        if: |
-          ${{ steps.check_box_exists.outputs.exists == 'false' }} ||
-          ${{ steps.box_changed.outputs.src == 'true' }} ||
-          ${{ github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
         with:
           name: proxmox-ve-box
