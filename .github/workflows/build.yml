@@ -73,3 +73,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - name: Setup cluster
+        run: |
+          echo "Setup cluster"
