@@ -79,6 +79,7 @@ curl --unix-socket /tmp/firecracker.socket -i \
    }'
 
 # Kill the firecracker process to exit the workflow
+cat /etc/os-release
 
 apt update && apt install -y qemu-system packer
 
