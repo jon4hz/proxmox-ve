@@ -9,15 +9,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Setup QEMU
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-system
       - name: Setup packer
         uses: hashicorp/setup-packer@v3
         with:
           version: latest
       - name: Packer init
         run: packer init ./proxmox-ve.pkr.hcl
-      - name: Packer build
-        run: make build-libvirt
+      - name: Setup QEMU and run build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system
+          make build-libvirt
