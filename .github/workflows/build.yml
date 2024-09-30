@@ -6,13 +6,18 @@ jobs:
   vm-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      # - name: Install arkade
-      #   uses: alexellis/setup-arkade@v3
-      # - name: Install firecracker
-      #   run: |
-      #     sudo arkade system install firecracker
-      - name: Run microVM
-        run: sudo -E ./run-vm.sh
+      - name: Setup QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system
+      - name: Setup packer
+        uses: hashicorp/setup-packer
+        with:
+          version: latest
+      - name: Packer init
+        run: packer init ./proxmox-ve.pkr.hcl
+      - name: Packer build
+        run: make build-libvirt
