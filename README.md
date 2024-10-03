@@ -12,6 +12,15 @@ After the example vagrant environment is started, you can access the [Proxmox We
 
 For a cluster example see [rgl/proxmox-ve-cluster-vagrant](https://github.com/rgl/proxmox-ve-cluster-vagrant).
 
+## About this fork
+This fork contains various changes with the goal to create a box that can be used to test proxmox upgrade scenarios.  
+The following notable changes have been implemented:
+- Dropped support for Hyper-V and VirtualBox
+- Changed locales to Switzerland (de_CH)
+- Switched package mirror to https://pkg.adfinis-on-exoscale.ch
+- Removed provisioner script that upgrades the base image
+- Added a pipeline to build the base box
+
 ## libvirt
 
 Create the base box:

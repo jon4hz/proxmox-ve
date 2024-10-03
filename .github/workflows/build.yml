@@ -27,6 +27,8 @@ jobs:
             src:
               - 'proxmox-ve.pkr.hcl'
               - 'provisioners/**'
+              - 'Vagrantfile*'
+              - 'box-metadata.sh'
 
       - name: Check if box artifact exists
         uses: LIT-Protocol/artifact-exists-action@v0
@@ -65,14 +67,3 @@ jobs:
             ./proxmox-ve-amd64-libvirt.box
             ./proxmox-ve-amd64-libvirt.box.json
           retention-days: 90
-
-  setup-cluster:
-    needs: box-builer
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Setup cluster
-        run: |
-          echo "Setup cluster"

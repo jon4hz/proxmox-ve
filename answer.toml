@@ -1,9 +1,9 @@
 # see https://pve.proxmox.com/wiki/Automated_Installation
 
 [global]
-keyboard = "en-us"
-country = "us"
-timezone = "America/New_York"
+keyboard = "de-ch"
+country = "ch"
+timezone = "Europe/Zurich"
 fqdn = "pve.example.com"
 mailto = "pve@example.com"
 root_password = "vagrant"
